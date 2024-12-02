@@ -1,0 +1,910 @@
+---
+title: "Data Prescription"
+subtitle: "Introducing R for Nursing Analytics"
+author: "Dr. Bret Staudt Willet"
+date: "December 18, 2024"
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    seal: true
+    css: [default, 'custom.css', 'custom-fonts.css']
+    nature:
+      titleSlideClass: [left, bottom]
+      highlightStyle: github
+      highlightLines: true
+      countIncrementalSlides: false
+---
+
+```{r setup, include=FALSE}
+usethis::use_git_ignore(c("*.csv", "*.rds"))
+options(htmltools.dir.version = FALSE)
+
+library(knitr)
+library(xaringan)
+library(fontawesome)
+library(tidyverse)
+library(fitbitr)
+```
+
+class: inverse, center, middle
+
+# `r fa("fas fa-images", fill = "#fff")`
+
+**View the slides:** 
+
+[bretsw.com/nursing24-workshop](https://bretsw.com/nursing24-workshop)
+
+---
+
+
+
+
+
+
+
+class: inverse, center, middle
+
+# `r fa("fab fa-r-project", fill = "#fff")` <br><br> **Part 1:** <br> Introduction to R
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Our Constructivist Approach
+
+--
+
+1. I'll introduce some concepts
+
+--
+
+1. You'll try some code
+
+--
+
+1. We'll all discuss together
+
+--
+
+```{r, out.width="320px", echo=FALSE, fig.align="center"}
+include_graphics("img/tech_support_cheat_sheet.png")
+```
+
+<div class="caption">
+<p><a href="https://xkcd.com/627/" target="_blank">'Tech Support Cheat Sheet' from XKCD</a></p>
+</div>
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fab fa-r-project", fill = "#fff")` <br><br> Background <br> on R and RStudio
+
+---
+
+# `r fa("fab fa-r-project", fill = "#fff")` Why Learn R?
+
+--
+
+- It is increasingly used in academia
+
+--
+
+- It is cross-platform, open-source, and freely-available
+
+--
+
+- It is a programming language and quite flexible
+
+--
+
+- It is capable of carrying out basic and complex statistical analyses
+
+--
+
+- It is able to work with data small (*n* = 10) and large (*n* = 1,000,000+) efficiently
+
+--
+
+- There is a great, inclusive community of users and developers
+
+---
+
+# `r fa("fab fa-r-project", fill = "#fff")` Setting up R
+
+### To download R
+
+- Visit [**cran.r-project.org**](https://cran.r-project.org/) to download R
+- Find your operating system (Mac, Windows, or Linux)
+- Download the 'latest release' on the page for your operating system and download and install the application
+
+--
+
+### To download RStudio Desktop
+
+- Visit [**posit.co**](https://posit.co/download/rstudio-desktop/) to download RStudio Desktop from the parent company, Posit
+- Find your operating system (Mac, Windows, or Linux)
+- Download the 'latest release' on the page for your operating system and download and install the application
+
+--
+
+### RMarkdown
+
+- RMarkdown is a data analysis "notebook" that combines text with code and output
+- It is a great file type to use when beginning to use R and to create reproducible analyses
+- It is fun to use because you can generate different types of output (Word, PDF, and even web-based)
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+starwars
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, eval=TRUE}
+starwars
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+glimpse(starwars)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, eval=TRUE}
+glimpse(starwars)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+starwars %>% 
+  filter(height <= 150) %>% 
+  arrange(height) %>%
+  select(name, sex, height, mass, homeworld)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, eval=TRUE}
+starwars %>% 
+  filter(height <= 120) %>% 
+  arrange(height) %>%
+  select(name, sex, height, mass, homeworld)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+starwars %>% 
+  unnest(starships) %>% 
+  select(name, gender, starships) %>%
+  head(15)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, eval=TRUE}
+starwars %>% 
+  unnest(starships) %>% 
+  select(starships, name, gender) %>%
+  head(15)
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+starwars %>% 
+  unnest(starships) %>% 
+  mutate(vehicles = strsplit(starships, ",")) %>%
+  unnest(starships) %>% 
+  select(name, gender, starships) %>% 
+  group_by(gender) %>% 
+  count()
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, eval=TRUE}
+starwars %>% 
+  unnest(starships) %>% 
+  mutate(vehicles = strsplit(starships, ",")) %>%
+  unnest(starships) %>% 
+  select(name, gender, starships) %>% 
+  group_by(gender) %>% 
+  count() %>%
+  arrange(desc(n))
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Visualizing Data
+
+```{r, warning=FALSE, eval=TRUE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center"}
+starwars %>% 
+  ggplot() +
+  geom_point(aes(x = mass, y = height, color = gender))
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` <br><br> **Part 2:** <br> Fitbit Data
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` <br><br> Set up the <br> Fitbit API
+
+### Step 1: Register a Fitbit developer app
+
+This example of health analytics utilizes the {fitbitr} R package ([Kaye, 2021](https://matthewrkaye.com/fitbitr/)). The functions in the package are relatively straightforward, but getting access to the [Fitbit API](https://dev.fitbit.com/build/reference/web-api/) set up is a bit tricky. 
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` <br><br> Set up the <br> Fitbit API
+
+### Step 1: Register a Fitbit developer app
+
+The first thing to do is register a new Fitbit developer app at [dev.fitbit.com](https://dev.fitbit.com/apps/new).
+
+---
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` Set up the Fitbit API
+
+### Step 1: Register a Fitbit developer app
+
+Here's how I completed the form:
+
+<hr>
+
+- **Application Name:** `r-health-tracker`
+- **Description:** `fitbitr script`
+- **Application Website URL:** `https://github.com/bretsw/fitbit` (replace with your GitHub repo)
+- **Organization:** `bretsw` (replace with your GitHub user name)
+- **Organization Website URL:** `https://github.com/bretsw/fitbit` (replace with your GitHub repo)
+- **Terms of Service URL:** `https://github.com/bretsw/fitbit` (replace with your GitHub repo)
+- **Privacy Policy URL:** `https://github.com/bretsw/fitbit` (replace with your GitHub repo)
+- **OAuth 2.0 Application Type:** `Personal`
+- **Redirct URL:** `http://localhost:1410/`
+- **Default Access Type:** `Read Only`
+
+---
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` Set up the Fitbit API
+
+### Step 1: Register a Fitbit developer app
+
+I got a warning from the dev website that the redirect URL needs to be an `https`, but it needs to be in the exact format I have above, because this is how R is set up to take you back to your R console. If you have to, complete the initial form with `https://localhost:1410/` initially, then go back and edit it before you run your R script.
+
+Once you submit your Fitbit dev app, you will be taken to a webpage that lists your **OAuth 2.0 Client ID** and **Client Secret**. 
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` <br><br> Set up the <br> Fitbit API
+
+### Step 2: Record your dev app credentials
+
+---
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` Set up the Fitbit API
+
+### Step 2: Record your dev app credentials
+
+Be sure to make a copy of your Fitbit dev app **OAuth 2.0 Client ID** and **Client Secret**. I find it easiest to securely store these in my local R user environment. You can open this file with the command `usethis::edit_r_environ()` and then retrieve stored variables with `Sys.getenv()`. 
+
+In my R script below, note that you should save your credentials in the form `FITBIT_CLIENT_ID = XXXXXX` and `FITBIT_CLIENT_SECRET = XXXXXX`.
+
+Once you have your credentials stored, close the .Renviron file and quit out of R entirely. When you restart R, your credentials are ready to go. You can check if things are stored correctly by running: `Sys.getenv('FITBIT_CLIENT_ID')` and `Sys.getenv('FITBIT_CLIENT_SECRET')`.
+
+Just be sure that you don't share these credentials with anyone!
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` <br><br> Set up the <br> Fitbit API
+
+### Step 3: Retrieve your Fitbit data
+
+---
+
+# `r fa("fas fa-heart-pulse", fill = "#fff")` Set up the Fitbit API
+
+### Step 3: Retrieve your Fitbit data
+
+```{r, message=FALSE, eval=FALSE}
+fitbitr::generate_fitbitr_token(
+  app_name = Sys.getenv('FITBIT_APP_NAME'),
+  client_id = Sys.getenv('FITBIT_CLIENT_ID'),
+  client_secret = Sys.getenv('FITBIT_CLIENT_SECRET'),
+  callback = Sys.getenv('FITBIT_REDIRECT_URL'),
+  cache = FALSE
+)
+```
+
+
+
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-otter", fill = "#fff")` <br><br> Try it Out! 
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+start_date <- 
+  lubridate::mdy("12/01/2024") - lubridate::days(1094) 
+end_date <- 
+  lubridate::mdy("12/01/2024")
+
+steps_df <- 
+  get_steps(start_date, end_date)
+```
+
+```{r, include=FALSE, eval=FALSE}
+write_csv(steps_df, "data/steps2024.csv")
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+### Look at your daily steps
+
+```{r, include=FALSE, message=FALSE}
+steps_df <- read_csv("data/steps2024.csv")
+```
+
+```{r}
+tail(steps_df, 15)
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point()
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth()
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day")
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps")
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  geom_smooth(color = "green") +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  geom_smooth(color = "green") +
+  xlab(NULL) +
+  scale_y_continuous(labels = scales::comma) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/daily-steps2024.png", width=8, height=4.5)
+```
+
+
+
+
+
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+hr <- get_heart_rate_intraday(lubridate::mdy("11/28/2024"))
+```
+
+```{r, include=FALSE, eval=FALSE}
+write_csv(hr, "data/hr-11-28-2024.csv")
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, include=FALSE, message=FALSE}
+hr <- read_csv("data/hr-11-28-2024.csv")
+```
+
+```{r}
+head(hr, 15)
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(hr, aes(x = time, y = heart_rate)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Beats per Minute") +
+  ggtitle("Thanksgiving Heart Rate") +
+  theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/heart-rate-thanksgiving2024.png", width=8, height=4.5)
+```
+
+
+
+
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+steps_intraday <- get_steps_intraday(lubridate::mdy("11/28/2024"))
+```
+
+```{r, include=FALSE, eval=FALSE}
+write_csv(steps_intraday, "data/intraday-steps-11-28-2024.csv")
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, include=FALSE, message=FALSE}
+steps_intraday <- read_csv("data/intraday-steps-11-28-2024.csv")
+```
+
+```{r}
+head(steps_intraday, 15)
+```
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(steps_intraday, aes(x = time, y = steps)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps by Minute") +
+  ggtitle("Thanksgiving Steps") +
+  theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/intraday-steps11-28-2024.png", width=8, height=4.5)
+```
+
+
+
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, include=FALSE, message=FALSE}
+comparison_day <- 
+  hr %>%
+  full_join(steps_intraday, by = "time")
+```
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(comparison_day, aes(x = steps, y = heart_rate)) +
+  geom_point() +
+  xlab("Steps per Minute") +
+  ylab("Beats per Minute") +
+  ggtitle("Heart Rate vs. Steps") +
+  theme_bw()
+```
+
+
+
+
+
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+activity_df <- get_activity_summary(lubridate::mdy("11/28/2024"))
+```
+
+```{r, include=FALSE, eval=FALSE}
+write_csv(activity_df, "data/activity-11-28-2024.csv")
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, include=FALSE, message=FALSE}
+activity_df <- read_csv("data/activity-11-28-2024.csv")
+```
+
+```{r}
+glimpse(activity_df)
+```
+
+
+
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+What do you think this code will do?
+
+```{r, eval=FALSE}
+health_df = NULL
+
+for (i in 0:60) {
+  new_row =
+    tibble(date = lubridate::mdy("12/01/2024") - i,
+           resting_hr = get_activity_summary(date)$resting_heart_rate,
+           steps = get_activity_summary(date)$steps
+           )
+  health_df <-
+    health_df %>%
+    bind_rows(new_row)
+}
+```
+
+```{r, include=FALSE, eval=FALSE}
+write_csv(health_df, "data/activity-trend-2024.csv")
+```
+
+---
+
+# `r fa("fas fa-otter", fill = "#fff")` Try it Out!
+
+Let's see!
+
+```{r, include=FALSE, message=FALSE}
+health_df <- 
+  read_csv("data/activity-trend-2024.csv")
+```
+
+```{r}
+head(health_df, 15)
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(health_df, aes(x = date, y = resting_hr)) +
+geom_point() +
+geom_smooth() +
+xlab(NULL) +
+ylab("Beats per Minute while Resting") +
+ggtitle("Resting Heart Rate") +
+theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/resting-heart-rate-over-time-2024.png", width=8, height=4.5)
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(health_df, aes(x = steps, y = resting_hr)) +
+geom_point() +
+geom_smooth() +
+xlab("Daily Steps") +
+scale_x_continuous(labels = scales::comma) +
+ylab("Beats per Minute while Resting") +
+ggtitle("Resting Heart Rate vs. Daily Steps") +
+theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/resting-heart-rate-vs-daily-steps-2024.png", width=8, height=4.5)
+```
+
+---
+
+# `r fa("fas fa-chart-line", fill = "#fff")` Picture it!
+
+```{r, message=FALSE, warning=FALSE, fig.width=8, fig.height=4.5, dpi=200, fig.align="center", out.width="75%"}
+ggplot(health_df, aes(x = steps, y = resting_hr)) +
+geom_point() +
+geom_smooth() +
+xlim(0, 15000) +
+scale_x_continuous(label = scales::comma) +
+xlab("Daily Steps") +
+ylim(0, 70) +
+ylab("Beats per Minute while Resting") +
+ggtitle("Resting Heart Rate vs. Daily Steps") +
+theme_bw()
+```
+
+```{r, include=FALSE, eval=FALSE}
+ggsave(file="img/resting-heart-rate-vs-daily-steps-2024-zoomed.png", width=8, height=4.5)
+```
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-code", fill = "#fff")` <br><br> Next Steps
+
+---
+
+# `r fa("fas fa-code", fill = "#fff")` Next Steps
+
+--
+
+- Download a copy of this repository: https://github.com/bretsw/nursing24-workshop
+
+--
+
+- If you have a Fitbit, see if you can retrieve and analyze your own data.
+
+--
+
+- Regardless, use the saved data in the `data` folder to play around a bit more, changing different parameters.
+
+--
+
+<hr>
+
+### Reflect: 
+
+--
+
+- What other comparisons might you make?
+
+--
+
+- How else might you analyze these Fitbit data?
+
+
+
+
+
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-list", fill = "#fff")` <br><br> Appendix: <br> Helpful Resources <br> and Troubleshooting
+
+---
+
+# `r fa("fas fa-list", fill = "#fff")` Resources
+
+**Beginners:**
+
+- [RStudio Beginners' Guide](https://education.rstudio.com/learn/beginner/)
+- Book: [*Data Science in Education Using R*](https://datascienceineducation.com)
+  - [Physical copy of DSIEUR](https://www.routledge.com/Data-Science-in-Education-Using-R/Estrellado-Freer-Mostipak-Rosenberg-Velasquez/p/book/9780367422257)
+  - [Even more resources from DSIEUR](https://datascienceineducation.com/c18.html)
+
+<hr>
+
+**Intermediates:**
+
+- [RStudio Intermediates' Guide](https://education.rstudio.com/learn/intermediate/)
+- Book: [*R for Data Science*](https://r4ds.had.co.nz/)
+
+<hr>
+
+**Experts:**
+
+- [RStudio Experts' Guide](https://education.rstudio.com/learn/expert/)
+- Book: [*Data Analysis in Medicine and Health using R*](https://bookdown.org/drki_musa/dataanalysis/)
+- Book: [*Learning Statistics with R*](https://learningstatisticswithr.com/)
+
+
+
+---
+
+# `r fa("fas fa-list", fill = "#fff")` Troubleshooting
+
+- Try to find out what the specific problem is:
+  - Identify what is *not* causing the problem
+- "Unplug and plug it back in" - restart R; close and reopen R
+- Seek out workshops and other learning opportunities
+- Reach out to others! Sharing what is causing an issue can often help to clarify the problem
+  - [Posit Community forum](https://forum.posit.co/) (highly recommended!)
+  - [Contact Bret!](https://bretsw.com)
+- Describe your woes to a GenAI chatbot (e.g., ChatGPT)
+- General strategies on learning more: [Chapter 17 of *Data Science in Education Using R*](https://datascienceineducation.com/c17.html)
+
+
+
+---
+
+class: inverse, center, middle
+
+# `r fa("fas fa-question", fill = "#fff")` <br><br> Questions
+
+<hr>
+
+`r fa("fas fa-envelope", fill = "#fff")` [bret.staudtwillet@fsu.edu](mailto:bret.staudtwillet@fsu.edu) | `r fa("fas fa-globe", fill = "#fff")` [bretsw.com](https://bretsw.com) | `r fa("fab fa-github", fill = "#fff")` [GitHub](https://github.com/bretsw/)
+
+<hr>
+
+`r fa("fas fa-images", fill = "#fff")` Slides: [bretsw.com/nursing24-workshop](https://bretsw.com/nursing24-workshop)
+
+`r fa("fas fa-code", fill = "#fff")` Source Materials: [github.com/bretsw/nursing24-workshop](https://github.com/bretsw/nursing24-workshop)
