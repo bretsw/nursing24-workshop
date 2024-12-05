@@ -908,3 +908,5 @@ class: inverse, center, middle
 `r fa("fas fa-images", fill = "#fff")` Slides: [bretsw.com/nursing24-workshop](https://bretsw.com/nursing24-workshop)
 
 `r fa("fas fa-code", fill = "#fff")` Source Materials: [github.com/bretsw/nursing24-workshop](https://github.com/bretsw/nursing24-workshop)
+
+`r fa("fas fa-book-open", fill = "#fff")` Workbook: [github.com/bretsw/nursing24-workshop/blob/main/index.Rmd](https://github.com/bretsw/nursing24-workshop/blob/main/workbook.Rmd)

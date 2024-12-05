@@ -1,0 +1,440 @@
+---
+title: "Workbook"
+subtitle: "Data Prescription: Introducing R for Nursing Analytics"
+author: "Dr. Bret Staudt Willet"
+date: "December 18, 2024"
+---
+
+
+# Set Up
+
+```{r}
+library(tidyverse)
+library(fitbitr)
+```
+
+
+---
+
+
+# Try it Out, Part 1: Star Wars
+
+
+```{r}
+starwars
+```
+
+
+---
+
+
+```{r}
+glimpse(starwars)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  pull(name)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  select(name, sex, height, mass)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  filter(height <= 150) %>% 
+  arrange(height)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  select(name, starships)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  unnest(starships) %>% 
+  select(name, gender, starships)
+```
+
+
+---
+
+
+```{r}
+starwars %>% 
+  unnest(starships) %>% 
+  select(name, gender, starships) %>% 
+  group_by(gender) %>% 
+  count()
+```
+
+
+---
+
+
+```{r, warning=FALSE}
+starwars %>% 
+  ggplot(aes(x = mass, y = height, color = gender)) +
+  geom_point()
+```
+
+
+---
+
+
+# Try it Out, Part 2: Fitbit Data
+
+
+---
+
+
+### Daily Steps
+
+```{r, message=FALSE}
+steps_df <- read_csv("data/steps2024.csv")
+```
+
+```{r}
+tail(steps_df, 15)
+```
+
+
+---
+
+
+```{r, warning=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point()
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth()
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day")
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps")
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  geom_smooth(color = "green") +
+  xlab(NULL) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_df %>%
+  ggplot(aes(x = date, y = steps)) +
+  geom_point(color = "blue", alpha = 0.5) +
+  geom_smooth(color = "green") +
+  xlab(NULL) +
+  scale_y_continuous(labels = scales::comma) +
+  ylab("Steps per Day") +
+  ggtitle("Number of Daily Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+### Intraday Steps
+
+```{r, message=FALSE}
+steps_intraday <- read_csv("data/intraday-steps-11-28-2024.csv")
+```
+
+```{r}
+head(steps_intraday, 15)
+```
+
+
+---
+
+
+```{r, message=FALSE}
+steps_intraday %>%
+  ggplot(aes(x = time, y = steps)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Steps by Minute") +
+  ggtitle("Thanksgiving Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+### Heart Rate
+
+```{r, message=FALSE}
+hr <- read_csv("data/hr-11-28-2024.csv")
+```
+
+```{r}
+head(hr, 15)
+```
+
+
+---
+
+
+```{r, message=FALSE}
+hr %>%
+  ggplot(aes(x = time, y = heart_rate)) +
+  geom_point(alpha = 0.5) +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Beats per Minute") +
+  ggtitle("Thanksgiving Heart Rate") +
+  theme_bw()
+```
+
+
+---
+
+
+# Comparison 
+
+```{r}
+comparison_day <- 
+  hr %>%
+  full_join(steps_intraday, by = "time")
+```
+
+```{r, warning=FALSE}
+comparison_day %>%
+  ggplot(aes(x = steps, y = heart_rate)) +
+  geom_point() +
+  xlab("Steps per Minute") +
+  ylab("Beats per Minute") +
+  ggtitle("Heart Rate vs. Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+# Activity Summary - Thanksgiving Day
+
+```{r, message=FALSE}
+activity_df <- read_csv("data/activity-11-28-2024.csv")
+```
+
+```{r}
+glimpse(activity_df)
+```
+
+
+---
+
+
+# Activity Summary - Trend
+
+```{r, message=FALSE}
+health_df <- read_csv("data/activity-trend-2024.csv")
+```
+
+```{r}
+head(health_df, 15)
+```
+
+
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+health_df %>%
+  ggplot(aes(x = date, y = resting_hr)) +
+  geom_point() +
+  geom_smooth() +
+  xlab(NULL) +
+  ylab("Beats per Minute while Resting") +
+  ggtitle("Resting Heart Rate") +
+  theme_bw()
+```
+
+
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+health_df %>% 
+  ggplot(aes(x = steps, y = resting_hr)) +
+  geom_point() +
+  geom_smooth() +
+  xlab("Daily Steps") +
+  scale_x_continuous(labels = scales::comma) +
+  ylab("Beats per Minute while Resting") +
+  ggtitle("Resting Heart Rate vs. Daily Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+```{r, message=FALSE, warning=FALSE}
+health_df %>%
+  ggplot(aes(x = steps, y = resting_hr)) +
+  geom_point() +
+  geom_smooth() +
+  xlim(0, 15000) +
+  scale_x_continuous(label = scales::comma) +
+  xlab("Daily Steps") +
+  ylim(0, 70) +
+  ylab("Beats per Minute while Resting") +
+  ggtitle("Resting Heart Rate vs. Daily Steps") +
+  theme_bw()
+```
+
+
+---
+
+
+# Helpful Resources and Troubleshooting
+
+
+---
+
+
+### Resources
+
+**Beginners:**
+
+- [RStudio Beginners' Guide](https://education.rstudio.com/learn/beginner/)
+- Book: [*Data Science in Education Using R*](https://datascienceineducation.com)
+  - [Physical copy of DSIEUR](https://www.routledge.com/Data-Science-in-Education-Using-R/Estrellado-Freer-Mostipak-Rosenberg-Velasquez/p/book/9780367422257)
+  - [Even more resources from DSIEUR](https://datascienceineducation.com/c18.html)
+
+**Intermediates:**
+
+- [RStudio Intermediates' Guide](https://education.rstudio.com/learn/intermediate/)
+- Book: [*R for Data Science*](https://r4ds.had.co.nz/)
+
+**Experts:**
+
+- [RStudio Experts' Guide](https://education.rstudio.com/learn/expert/)
+- Book: [*Data Analysis in Medicine and Health using R*](https://bookdown.org/drki_musa/dataanalysis/)
+- Book: [*Learning Statistics with R*](https://learningstatisticswithr.com/)
+
+
+---
+
+
+# Troubleshooting
+
+- Try to find out what the specific problem is:
+  - Identify what is *not* causing the problem
+- "Unplug and plug it back in" - restart R; close and reopen R
+- Seek out workshops and other learning opportunities
+- Reach out to others! Sharing what is causing an issue can often help to clarify the problem
+  - [Posit Community forum](https://forum.posit.co/) (highly recommended!)
+  - [Contact Bret!](https://bretsw.com)
+- Describe your woes to a GenAI chatbot (e.g., ChatGPT)
+- General strategies on learning more: [Chapter 17 of *Data Science in Education Using R*](https://datascienceineducation.com/c17.html)
+
+
+
+---
+
+
+# Questions
+
+- Email: [bret.staudtwillet@fsu.edu](mailto:bret.staudtwillet@fsu.edu)
+- Website: [bretsw.com](https://bretsw.com)
+- GitHub: [github.com/bretsw/](https://github.com/bretsw/)
+
+
+---
+
+
+# Materials
+
+- Slides: [bretsw.com/nursing24-workshop](https://bretsw.com/nursing24-workshop)
+- Source Materials: [github.com/bretsw/nursing24-workshop](https://github.com/bretsw/nursing24-workshop)
+- Workbook: [github.com/bretsw/nursing24-workshop/blob/main/index.Rmd](https://github.com/bretsw/nursing24-workshop/blob/main/workbook.Rmd)
