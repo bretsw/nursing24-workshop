@@ -16,7 +16,7 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-usethis::use_git_ignore(c("*.csv", "*.rds"))
+#usethis::use_git_ignore(c("*.csv", "*.rds"))
 options(htmltools.dir.version = FALSE)
 
 library(knitr)
